@@ -1,0 +1,22 @@
+services:
+  simon-pkl:
+    build: .
+    container_name: simon-pkl
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      MAX_FILE_MB: ${MAX_FILE_MB:-50}
+      DEFAULT_ACADEMIC_YEAR: ${DEFAULT_ACADEMIC_YEAR:-2026/2027}
+      DEFAULT_SEMESTER: ${DEFAULT_SEMESTER:-Ganjil}
+    volumes:
+      - simon_pkl_data:/app/data
+      - simon_pkl_uploads:/app/uploads
+
+volumes:
+  simon_pkl_data:
+  simon_pkl_uploads:

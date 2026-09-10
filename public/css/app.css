@@ -2205,3 +2205,15 @@ select:disabled {
     break-inside: avoid;
   }
 }
+
+.footer-school {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-school img {
+  width: 74px;
+  height: 25px;
+  object-fit: contain;
+}

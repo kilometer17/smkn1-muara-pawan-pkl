@@ -85,8 +85,11 @@ export function queryMessage(req) {
 }
 
 export function redirectWith(res, targetPath, type, message) {
-  const separator = targetPath.includes("?") ? "&" : "?";
-  res.redirect(`${targetPath}${separator}${type}=${encodeURIComponent(message)}`);
+  const hashIndex = targetPath.indexOf("#");
+  const base = hashIndex >= 0 ? targetPath.slice(0, hashIndex) : targetPath;
+  const hash = hashIndex >= 0 ? targetPath.slice(hashIndex) : "";
+  const separator = base.includes("?") ? "&" : "?";
+  res.redirect(`${base}${separator}${type}=${encodeURIComponent(message)}${hash}`);
 }
 
 export function csvCell(value) {
