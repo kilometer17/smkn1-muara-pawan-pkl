@@ -1,0 +1,125 @@
+<%- include("../partials/head", { title }) %>
+<%- include("../partials/sidebar", { title }) %>
+
+<div class="detail-heading">
+  <div>
+    <a class="back-link" href="/journals">← Kembali ke jurnal</a>
+    <div class="journal-title-line">
+      <h2><%= formatDate(journal.date) %></h2>
+      <span class="status status-<%= journal.status %>"><%= statusLabels[journal.status] %></span>
+    </div>
+    <p><%= journal.student?.name || '—' %> · <%= journal.group?.name || '—' %> · <%= journal.partner?.name || '—' %></p>
+  </div>
+  <div class="action-group">
+    <% if (currentUser.role === 'SISWA' && journal.status !== 'approved') { %>
+      <a class="button button-outline" href="/journals/<%= journal.id %>/edit">Ubah jurnal</a>
+    <% } %>
+    <a class="button button-secondary" href="/portfolio/<%= journal.studentId %>.pdf?groupId=<%= journal.groupId %>">Unduh portofolio</a>
+  </div>
+</div>
+
+<div class="detail-grid">
+  <div class="detail-main">
+    <section class="panel">
+      <div class="summary-strip">
+        <div><span>Kehadiran</span><strong><%= attendanceLabels[journal.attendance] %></strong></div>
+        <div><span>Jam kerja</span><strong><%= journal.startTime || '—' %> – <%= journal.endTime || '—' % %></strong></div>
+        <div><span>Dikirim</span><strong><%= formatDateTime(journal.createdAt) %></strong></div>
+      </div>
+      <div class="report-section">
+        <span>Kegiatan yang dikerjakan / keterangan</span>
+        <p><%= journal.activity %></p>
+      </div>
+      <div class="report-section">
+        <span>Hasil atau pelajaran yang diperoleh</span>
+        <p><%= journal.learning || 'Belum diisi.' %></p>
+      </div>
+      <div class="report-columns">
+        <div class="report-section"><span>Kendala</span><p><%= journal.obstacle || 'Tidak ada kendala.' %></p></div>
+        <div class="report-section"><span>Catatan tambahan</span><p><%= journal.notes || 'Tidak ada catatan.' %></p></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <div><span class="eyebrow">Bukti kegiatan</span><h2><%= journal.attachments.length %> lampiran</h2></div>
+      </div>
+      <% if (!journal.attachments.length) { %>
+        <div class="empty-compact"><p>Tidak ada lampiran pada jurnal ini.</p></div>
+      <% } else { %>
+        <div class="attachment-grid">
+          <% journal.attachments.forEach((item) => { %>
+            <article class="attachment-card">
+              <% if (item.type === 'PHOTO') { %>
+                <a href="/files/<%= journal.id %>/<%= item.id %>" target="_blank" rel="noopener" class="attachment-preview">
+                  <img src="/files/<%= journal.id %>/<%= item.id %>" alt="Dokumentasi <%= item.originalName %>" loading="lazy">
+                </a>
+              <% } else if (item.type === 'VIDEO') { %>
+                <div class="attachment-preview video-preview">
+                  <video controls preload="metadata">
+                    <source src="/files/<%= journal.id %>/<%= item.id %>" type="<%= item.mime %>">
+                  </video>
+                </div>
+              <% } else { %>
+                <a href="/files/<%= journal.id %>/<%= item.id %>" target="_blank" rel="noopener" class="attachment-preview document-preview">
+                  <span>▤</span><strong>Buka dokumen</strong>
+                </a>
+              <% } %>
+              <div class="attachment-info">
+                <strong title="<%= item.originalName %>"><%= item.originalName %></strong>
+                <span><%= item.type %> · <%= formatBytes(item.size) %></span>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </div>
+
+  <aside class="detail-aside">
+    <section class="panel">
+      <div class="panel-heading"><div><span class="eyebrow">Status laporan</span><h2>Verifikasi</h2></div></div>
+      <div class="review-state review-<%= journal.status %>">
+        <span><%= journal.status === 'approved' ? '✓' : journal.status === 'revision' ? '!' : '◷' %></span>
+        <div><strong><%= statusLabels[journal.status] %></strong>
+          <p>
+            <% if (journal.review) { %>
+              Oleh <%= journal.reviewer?.name || 'pembimbing' %>, <%= formatDateTime(journal.review.reviewedAt) %>.
+            <% } else { %>
+              Jurnal belum diperiksa pembimbing.
+            <% } %>
+          </p>
+        </div>
+      </div>
+      <% if (journal.review?.comment) { %>
+        <blockquote class="review-note"><%= journal.review.comment %></blockquote>
+      <% } %>
+
+      <% if (['ADMIN','GURU','PEMBIMBING_LAPANGAN'].includes(currentUser.role)) { %>
+        <form action="/journals/<%= journal.id %>/review" method="post" class="stack-form review-form">
+          <label>
+            <span>Catatan pembimbing</span>
+            <textarea name="comment" rows="4" maxlength="2000" placeholder="Berikan umpan balik yang jelas."><%= journal.review?.comment || '' %></textarea>
+          </label>
+          <div class="review-buttons">
+            <button class="button button-danger-soft" type="submit" name="status" value="revision">Minta revisi</button>
+            <button class="button button-success" type="submit" name="status" value="approved">Setujui</button>
+          </div>
+        </form>
+      <% } %>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><span class="eyebrow">Penempatan</span><h2>Informasi PKL</h2></div></div>
+      <dl class="info-list">
+        <div><dt>Siswa</dt><dd><%= journal.student?.name || '—' %></dd></div>
+        <div><dt>NIS / Kelas</dt><dd><%= [journal.student?.nis, journal.student?.className].filter(Boolean).join(' / ') || '—' %></dd></div>
+        <div><dt>DUDI</dt><dd><%= journal.partner?.name || '—' %></dd></div>
+        <div><dt>Guru</dt><dd><%= userById(journal.group?.teacherId)?.name || '—' %></dd></div>
+        <div><dt>Pembimbing lapangan</dt><dd><%= userById(journal.group?.fieldSupervisorId)?.name || '—' %></dd></div>
+      </dl>
+    </section>
+  </aside>
+</div>
+
+<%- include("../partials/footer") %>

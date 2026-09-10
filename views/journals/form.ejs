@@ -1,0 +1,111 @@
+<%- include("../partials/head", { title }) %>
+<%- include("../partials/sidebar", { title }) %>
+
+<form action="<%= formAction %>" method="post" enctype="multipart/form-data" class="journal-form">
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">Langkah 1</span>
+        <h2>Identitas laporan</h2>
+      </div>
+      <span class="required-note">* Wajib diisi</span>
+    </div>
+    <% if (!groups.length) { %>
+      <div class="flash flash-error">
+        <span class="flash-icon">!</span>
+        <span>Anda belum ditempatkan pada kelompok PKL aktif. Hubungi administrator.</span>
+      </div>
+    <% } %>
+    <div class="form-grid">
+      <label>
+        <span>Kelompok PKL *</span>
+        <select name="groupId" required <%= journal ? 'disabled' : '' %>>
+          <option value="">Pilih kelompok</option>
+          <% groups.forEach((group) => { %>
+            <option value="<%= group.id %>" <%= journal?.groupId === group.id ? 'selected' : '' %>>
+              <%= group.name %> — <%= partnerById(group.partnerId)?.name || 'DUDI belum diisi' %>
+            </option>
+          <% }) %>
+        </select>
+        <% if (journal) { %><input type="hidden" name="groupId" value="<%= journal.groupId %>"><% } %>
+      </label>
+      <label>
+        <span>Tanggal *</span>
+        <input type="date" name="date" required value="<%= journal?.date || new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Pontianak' }) %>" <%= journal ? 'readonly' : '' %>>
+      </label>
+      <label>
+        <span>Status kehadiran *</span>
+        <select name="attendance" required>
+          <% Object.entries(attendanceLabels).forEach(([value, label]) => { %>
+            <option value="<%= value %>" <%= (journal?.attendance || 'HADIR') === value ? 'selected' : '' %>><%= label %></option>
+          <% }) %>
+        </select>
+      </label>
+      <div class="time-fields">
+        <label><span>Mulai</span><input type="time" name="startTime" value="<%= journal?.startTime || '' %>"></label>
+        <label><span>Selesai</span><input type="time" name="endTime" value="<%= journal?.endTime || '' %>"></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div><span class="eyebrow">Langkah 2</span><h2>Uraian kegiatan</h2></div>
+    </div>
+    <div class="stack-form">
+      <label>
+        <span>Kegiatan yang dikerjakan / keterangan ketidakhadiran *</span>
+        <textarea name="activity" required minlength="5" maxlength="5000" rows="5" placeholder="Tuliskan pekerjaan secara spesifik: apa yang dilakukan, alat/bahan yang digunakan, dan hasilnya."><%= journal?.activity || '' %></textarea>
+        <small>Contoh: Menyiapkan media tanam, mengukur komposisi, lalu mengisi 120 polybag.</small>
+      </label>
+      <label>
+        <span>Hasil atau pelajaran yang diperoleh</span>
+        <textarea name="learning" maxlength="5000" rows="4" placeholder="Pengetahuan, keterampilan, atau prosedur kerja yang dipelajari."><%= journal?.learning || '' %></textarea>
+      </label>
+      <div class="form-grid">
+        <label>
+          <span>Kendala</span>
+          <textarea name="obstacle" maxlength="3000" rows="3" placeholder="Tuliskan kendala jika ada."><%= journal?.obstacle || '' %></textarea>
+        </label>
+        <label>
+          <span>Catatan tambahan</span>
+          <textarea name="notes" maxlength="3000" rows="3" placeholder="Catatan keselamatan kerja atau tindak lanjut."><%= journal?.notes || '' %></textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div><span class="eyebrow">Langkah 3</span><h2>Lampiran kegiatan</h2></div>
+      <span class="file-count" data-file-count>0 file dipilih</span>
+    </div>
+    <label class="upload-zone">
+      <input type="file" name="attachments" multiple accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx,.xls,.xlsx,.mp4,.webm,.mov" data-file-input>
+      <span class="upload-icon">⇧</span>
+      <strong>Pilih foto, dokumen, atau video</strong>
+      <span>Maksimal 6 file. Batas ukuran mengikuti pengaturan server.</span>
+    </label>
+    <ul class="selected-files" data-file-list></ul>
+    <% if (journal?.attachments?.length) { %>
+      <div class="existing-files">
+        <h3>Lampiran yang sudah tersimpan</h3>
+        <% journal.attachments.forEach((item) => { %>
+          <a href="/files/<%= journal.id %>/<%= item.id %>" target="_blank" rel="noopener">
+            <span><%= item.type === 'PHOTO' ? '▧' : item.type === 'VIDEO' ? '▶' : '▤' %></span>
+            <div><strong><%= item.originalName %></strong><small><%= formatBytes(item.size) %></small></div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </section>
+
+  <div class="form-submit-bar">
+    <a class="button button-outline" href="<%= journal ? '/journals/' + journal.id : '/journals' %>">Batal</a>
+    <button class="button button-primary" type="submit" <%= !groups.length ? 'disabled' : '' %>>
+      <%= journal ? 'Simpan dan kirim ulang' : 'Kirim jurnal' %>
+    </button>
+  </div>
+</form>
+
+<%- include("../partials/footer") %>

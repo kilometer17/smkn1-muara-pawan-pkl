@@ -1,0 +1,185 @@
+<%- include("partials/head", { title }) %>
+<%- include("partials/sidebar", { title }) %>
+
+<div class="admin-intro">
+  <div>
+    <span class="eyebrow">Pusat administrasi</span>
+    <h2>Kelola pelaksanaan PKL</h2>
+    <p>Urutan yang disarankan: atur periode, tambah akun, tambah DUDI, lalu bentuk kelompok.</p>
+  </div>
+  <nav class="anchor-nav" aria-label="Bagian pengaturan">
+    <a href="#settings">Periode</a>
+    <a href="#users">Akun</a>
+    <a href="#partners">DUDI</a>
+    <a href="#groups">Kelompok</a>
+  </nav>
+</div>
+
+<section class="panel admin-section" id="settings">
+  <div class="panel-heading">
+    <div><span class="section-number">01</span><span class="eyebrow">Identitas dan periode</span><h2>Pengaturan aplikasi</h2></div>
+  </div>
+  <form action="/admin/settings" method="post" class="stack-form">
+    <div class="form-grid">
+      <label><span>Nama aplikasi</span><input name="applicationName" required maxlength="80" value="<%= settings.applicationName %>"></label>
+      <label><span>Nama sekolah</span><input name="schoolName" required maxlength="150" value="<%= settings.schoolName %>"></label>
+    </div>
+    <label><span>Alamat sekolah</span><textarea name="address" maxlength="300" rows="2"><%= settings.address %></textarea></label>
+    <div class="form-grid three">
+      <label><span>Tahun pelajaran</span><input name="academicYear" required pattern="\d{4}/\d{4}" placeholder="2026/2027" value="<%= settings.academicYear %>"></label>
+      <label><span>Semester</span><select name="semester"><option <%= settings.semester === 'Ganjil' ? 'selected' : '' %>>Ganjil</option><option <%= settings.semester === 'Genap' ? 'selected' : '' %>>Genap</option></select></label>
+      <div class="form-button-align"><button class="button button-primary" type="submit">Simpan pengaturan</button></div>
+    </div>
+  </form>
+</section>
+
+<section class="panel admin-section" id="users">
+  <div class="panel-heading">
+    <div><span class="section-number">02</span><span class="eyebrow">Pengguna sistem</span><h2>Guru, pembimbing, dan siswa</h2></div>
+    <span class="count-badge"><%= users.length %> akun</span>
+  </div>
+  <details class="create-box">
+    <summary>+ Tambah akun baru</summary>
+    <form action="/admin/users" method="post" class="stack-form">
+      <div class="form-grid">
+        <label><span>Nama lengkap *</span><input name="name" required maxlength="120"></label>
+        <label><span>Nama pengguna *</span><input name="username" required minlength="3" maxlength="60" pattern="[a-z0-9._-]+"></label>
+        <label><span>Peran *</span>
+          <select name="role" required>
+            <% Object.entries(roleLabels).forEach(([value,label]) => { %><option value="<%= value %>"><%= label %></option><% }) %>
+          </select>
+        </label>
+        <label><span>Kompetensi keahlian</span>
+          <select name="departmentId"><option value="">Tidak ditentukan</option><% departments.forEach((department) => { %><option value="<%= department.id %>"><%= department.code %> — <%= department.name %></option><% }) %></select>
+        </label>
+        <label><span>NIS (untuk siswa)</span><input name="nis" maxlength="40"></label>
+        <label><span>Kelas (untuk siswa)</span><input name="className" maxlength="50" placeholder="XI ATP"></label>
+        <label><span>Nomor telepon</span><input name="phone" maxlength="40"></label>
+        <label><span>Kata sandi awal *</span><input type="password" name="password" required minlength="10"><small>Minimal 10 karakter, huruf besar, huruf kecil, dan angka.</small></label>
+      </div>
+      <button class="button button-primary" type="submit">Simpan akun</button>
+    </form>
+  </details>
+
+  <div class="record-list">
+    <% users.forEach((user) => { %>
+      <details class="record-card">
+        <summary>
+          <span class="record-avatar"><%= user.name.charAt(0).toUpperCase() %></span>
+          <span class="record-main"><strong><%= user.name %></strong><small>@<%= user.username %> · <%= roleLabels[user.role] %></small></span>
+          <span class="status <%= user.active ? 'status-approved' : 'status-neutral' %>"><%= user.active ? 'Aktif' : 'Nonaktif' %></span>
+        </summary>
+        <form action="/admin/users/<%= user.id %>" method="post" class="stack-form record-form">
+          <div class="form-grid">
+            <label><span>Nama lengkap</span><input name="name" required value="<%= user.name %>"></label>
+            <label><span>Nama pengguna</span><input name="username" required pattern="[a-z0-9._-]+" value="<%= user.username %>"></label>
+            <label><span>Peran</span><select name="role"><% Object.entries(roleLabels).forEach(([value,label]) => { %><option value="<%= value %>" <%= user.role === value ? 'selected' : '' %>><%= label %></option><% }) %></select></label>
+            <label><span>Kompetensi keahlian</span><select name="departmentId"><option value="">Tidak ditentukan</option><% departments.forEach((department) => { %><option value="<%= department.id %>" <%= user.departmentId === department.id ? 'selected' : '' %>><%= department.code %> — <%= department.name %></option><% }) %></select></label>
+            <label><span>NIS</span><input name="nis" value="<%= user.nis || '' %>"></label>
+            <label><span>Kelas</span><input name="className" value="<%= user.className || '' %>"></label>
+            <label><span>Nomor telepon</span><input name="phone" value="<%= user.phone || '' %>"></label>
+            <label><span>Kata sandi baru</span><input type="password" name="password" minlength="10" placeholder="Kosongkan jika tidak diubah"></label>
+          </div>
+          <label class="check-row"><input type="checkbox" name="active" <%= user.active ? 'checked' : '' %>><span>Akun aktif</span></label>
+          <button class="button button-secondary" type="submit">Perbarui akun</button>
+        </form>
+      </details>
+    <% }) %>
+  </div>
+</section>
+
+<section class="panel admin-section" id="partners">
+  <div class="panel-heading">
+    <div><span class="section-number">03</span><span class="eyebrow">Mitra industri</span><h2>Dunia Usaha/Dunia Industri</h2></div>
+    <span class="count-badge"><%= partners.length %> DUDI</span>
+  </div>
+  <details class="create-box">
+    <summary>+ Tambah DUDI baru</summary>
+    <form action="/admin/partners" method="post" class="stack-form">
+      <div class="form-grid">
+        <label><span>Nama DUDI *</span><input name="name" required maxlength="150"></label>
+        <label><span>Nama kontak</span><input name="contactName" maxlength="120"></label>
+        <label><span>Nomor telepon</span><input name="phone" maxlength="40"></label>
+        <label><span>Alamat</span><textarea name="address" rows="2" maxlength="300"></textarea></label>
+      </div>
+      <button class="button button-primary" type="submit">Simpan DUDI</button>
+    </form>
+  </details>
+  <div class="record-list">
+    <% partners.forEach((partner) => { %>
+      <details class="record-card">
+        <summary>
+          <span class="record-avatar partner-avatar">⌂</span>
+          <span class="record-main"><strong><%= partner.name %></strong><small><%= partner.address || 'Alamat belum diisi' %></small></span>
+          <span class="status <%= partner.active ? 'status-approved' : 'status-neutral' %>"><%= partner.active ? 'Aktif' : 'Nonaktif' %></span>
+        </summary>
+        <form action="/admin/partners/<%= partner.id %>" method="post" class="stack-form record-form">
+          <div class="form-grid">
+            <label><span>Nama DUDI</span><input name="name" required value="<%= partner.name %>"></label>
+            <label><span>Nama kontak</span><input name="contactName" value="<%= partner.contactName || '' %>"></label>
+            <label><span>Nomor telepon</span><input name="phone" value="<%= partner.phone || '' %>"></label>
+            <label><span>Alamat</span><textarea name="address" rows="2"><%= partner.address || '' %></textarea></label>
+          </div>
+          <label class="check-row"><input type="checkbox" name="active" <%= partner.active ? 'checked' : '' %>><span>DUDI aktif</span></label>
+          <button class="button button-secondary" type="submit">Perbarui DUDI</button>
+        </form>
+      </details>
+    <% }) %>
+  </div>
+</section>
+
+<section class="panel admin-section" id="groups">
+  <div class="panel-heading">
+    <div><span class="section-number">04</span><span class="eyebrow">Penempatan siswa</span><h2>Kelompok PKL</h2></div>
+    <span class="count-badge"><%= groups.length %> kelompok</span>
+  </div>
+  <% if (!teachers.length || !supervisors.length || !students.length || !partners.length) { %>
+    <div class="flash flash-warning"><span class="flash-icon">i</span><span>Tambahkan sekurang-kurangnya satu guru, pembimbing lapangan, siswa, dan DUDI sebelum membuat kelompok.</span></div>
+  <% } %>
+  <details class="create-box">
+    <summary>+ Bentuk kelompok baru</summary>
+    <form action="/admin/groups" method="post" class="stack-form">
+      <div class="form-grid">
+        <label><span>Nama kelompok *</span><input name="name" required maxlength="150" placeholder="Kelompok ATP 01"></label>
+        <label><span>Kompetensi keahlian *</span><select name="departmentId" required><option value="">Pilih kompetensi</option><% departments.forEach((item) => { %><option value="<%= item.id %>"><%= item.name %></option><% }) %></select></label>
+        <label><span>Tahun pelajaran *</span><input name="academicYear" required pattern="\d{4}/\d{4}" value="<%= settings.academicYear %>"></label>
+        <label><span>Semester *</span><select name="semester"><option <%= settings.semester === 'Ganjil' ? 'selected' : '' %>>Ganjil</option><option <%= settings.semester === 'Genap' ? 'selected' : '' %>>Genap</option></select></label>
+        <label><span>DUDI *</span><select name="partnerId" required><option value="">Pilih DUDI</option><% partners.filter(p => p.active).forEach((item) => { %><option value="<%= item.id %>"><%= item.name %></option><% }) %></select></label>
+        <label><span>Guru pembimbing *</span><select name="teacherId" required><option value="">Pilih guru</option><% teachers.forEach((item) => { %><option value="<%= item.id %>"><%= item.name %></option><% }) %></select></label>
+        <label><span>Pembimbing lapangan *</span><select name="fieldSupervisorId" required><option value="">Pilih pembimbing</option><% supervisors.forEach((item) => { %><option value="<%= item.id %>"><%= item.name %></option><% }) %></select></label>
+        <div class="date-pair"><label><span>Mulai</span><input type="date" name="startDate"></label><label><span>Selesai</span><input type="date" name="endDate"></label></div>
+      </div>
+      <fieldset class="student-picker"><legend>Pilih anggota siswa *</legend><div><% students.forEach((student) => { %><label><input type="checkbox" name="studentIds" value="<%= student.id %>"><span><strong><%= student.name %></strong><small><%= student.className || 'Kelas belum diisi' %> · <%= student.nis || 'NIS belum diisi' %></small></span></label><% }) %></div></fieldset>
+      <button class="button button-primary" type="submit">Buat kelompok</button>
+    </form>
+  </details>
+
+  <div class="record-list">
+    <% groups.forEach((group) => { %>
+      <details class="record-card">
+        <summary>
+          <span class="record-avatar group-avatar"><%= group.studentIds.length %></span>
+          <span class="record-main"><strong><%= group.name %></strong><small><%= partnerById(group.partnerId)?.name || 'DUDI tidak ditemukan' %> · <%= group.academicYear %> <%= group.semester %></small></span>
+          <span class="status <%= group.active ? 'status-approved' : 'status-neutral' %>"><%= group.active ? 'Aktif' : 'Nonaktif' %></span>
+        </summary>
+        <form action="/admin/groups/<%= group.id %>" method="post" class="stack-form record-form">
+          <div class="form-grid">
+            <label><span>Nama kelompok</span><input name="name" required value="<%= group.name %>"></label>
+            <label><span>Kompetensi</span><select name="departmentId"><% departments.forEach((item) => { %><option value="<%= item.id %>" <%= group.departmentId === item.id ? 'selected' : '' %>><%= item.name %></option><% }) %></select></label>
+            <label><span>Tahun pelajaran</span><input name="academicYear" required pattern="\d{4}/\d{4}" value="<%= group.academicYear %>"></label>
+            <label><span>Semester</span><select name="semester"><option <%= group.semester === 'Ganjil' ? 'selected' : '' %>>Ganjil</option><option <%= group.semester === 'Genap' ? 'selected' : '' %>>Genap</option></select></label>
+            <label><span>DUDI</span><select name="partnerId"><% partners.forEach((item) => { %><option value="<%= item.id %>" <%= group.partnerId === item.id ? 'selected' : '' %>><%= item.name %></option><% }) %></select></label>
+            <label><span>Guru pembimbing</span><select name="teacherId"><% teachers.forEach((item) => { %><option value="<%= item.id %>" <%= group.teacherId === item.id ? 'selected' : '' %>><%= item.name %></option><% }) %></select></label>
+            <label><span>Pembimbing lapangan</span><select name="fieldSupervisorId"><% supervisors.forEach((item) => { %><option value="<%= item.id %>" <%= group.fieldSupervisorId === item.id ? 'selected' : '' %>><%= item.name %></option><% }) %></select></label>
+            <div class="date-pair"><label><span>Mulai</span><input type="date" name="startDate" value="<%= group.startDate || '' %>"></label><label><span>Selesai</span><input type="date" name="endDate" value="<%= group.endDate || '' %>"></label></div>
+          </div>
+          <fieldset class="student-picker"><legend>Anggota siswa</legend><div><% students.forEach((student) => { %><label><input type="checkbox" name="studentIds" value="<%= student.id %>" <%= group.studentIds.includes(student.id) ? 'checked' : '' %>><span><strong><%= student.name %></strong><small><%= student.className || 'Kelas belum diisi' %></small></span></label><% }) %></div></fieldset>
+          <label class="check-row"><input type="checkbox" name="active" <%= group.active ? 'checked' : '' %>><span>Kelompok aktif</span></label>
+          <button class="button button-secondary" type="submit">Perbarui kelompok</button>
+        </form>
+      </details>
+    <% }) %>
+  </div>
+</section>
+
+<%- include("partials/footer") %>

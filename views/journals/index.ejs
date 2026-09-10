@@ -1,0 +1,91 @@
+<%- include("../partials/head", { title }) %>
+<%- include("../partials/sidebar", { title }) %>
+
+<div class="page-actions">
+  <form action="/journals" method="get" class="filter-bar">
+    <label>
+      <span>Status</span>
+      <select name="status">
+        <option value="">Semua status</option>
+        <% Object.entries(statusLabels).forEach(([value, label]) => { %>
+          <option value="<%= value %>" <%= filters.status === value ? 'selected' : '' %>><%= label %></option>
+        <% }) %>
+      </select>
+    </label>
+    <% if (currentUser.role !== 'SISWA') { %>
+      <label>
+        <span>Kelompok</span>
+        <select name="groupId">
+          <option value="">Semua kelompok</option>
+          <% groups.forEach((group) => { %>
+            <option value="<%= group.id %>" <%= filters.groupId === group.id ? 'selected' : '' %>><%= group.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <% const visibleStudents = Array.from(new Map(groups.flatMap(group => group.studentIds).map(id => [id, userById(id)])).values()).filter(Boolean); %>
+      <label>
+        <span>Siswa</span>
+        <select name="studentId">
+          <option value="">Semua siswa</option>
+          <% visibleStudents.forEach((student) => { %>
+            <option value="<%= student.id %>" <%= filters.studentId === student.id ? 'selected' : '' %>><%= student.name %></option>
+          <% }) %>
+        </select>
+      </label>
+    <% } %>
+    <button class="button button-secondary" type="submit">Terapkan</button>
+  </form>
+  <div class="action-group">
+    <a class="button button-outline" href="/exports/journals.csv">Ekspor CSV</a>
+    <% if (currentUser.role === 'SISWA') { %>
+      <a class="button button-primary" href="/journals/new">+ Tambah jurnal</a>
+    <% } %>
+  </div>
+</div>
+
+<section class="panel">
+  <div class="panel-heading">
+    <div>
+      <span class="eyebrow">Catatan kegiatan</span>
+      <h2><%= journals.length %> jurnal ditemukan</h2>
+    </div>
+  </div>
+  <% if (!journals.length) { %>
+    <div class="empty-state">
+      <span class="empty-icon">▤</span>
+      <h3>Belum ada data yang sesuai</h3>
+      <p>Ubah filter atau tambahkan jurnal harian baru.</p>
+      <% if (currentUser.role === 'SISWA') { %>
+        <a class="button button-primary" href="/journals/new">Tambah jurnal</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="journal-list">
+      <% journals.forEach((journal) => { %>
+        <article class="journal-row">
+          <div class="date-tile">
+            <strong><%= String(new Date(journal.date + 'T12:00:00').getDate()).padStart(2, '0') %></strong>
+            <span><%= new Intl.DateTimeFormat('id-ID', { month: 'short', timeZone: 'Asia/Pontianak' }).format(new Date(journal.date + 'T12:00:00+07:00')) %></span>
+          </div>
+          <div class="journal-main">
+            <div class="journal-meta">
+              <strong><%= journal.student?.name || '—' %></strong>
+              <span>•</span>
+              <span><%= journal.group?.name || '—' %></span>
+              <span>•</span>
+              <span><%= attendanceLabels[journal.attendance] %></span>
+            </div>
+            <h3><%= journal.activity %></h3>
+            <p><%= journal.partner?.name || 'DUDI belum ditentukan' %> · <%= journal.attachments.length %> lampiran</p>
+          </div>
+          <div class="journal-status">
+            <span class="status status-<%= journal.status %>"><%= statusLabels[journal.status] %></span>
+            <a class="button button-small button-outline" href="/journals/<%= journal.id %>">Buka</a>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include("../partials/footer") %>
