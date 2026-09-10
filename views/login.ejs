@@ -1,0 +1,56 @@
+<%- include("partials/head", { title }) %>
+<div class="auth-page">
+  <section class="auth-visual">
+    <div class="auth-brand">
+      <img src="/images/school-mark.svg" alt="Lambang sekolah">
+      <div>
+        <span>Sistem Monitoring</span>
+        <strong>PKL SMK</strong>
+      </div>
+    </div>
+    <div class="auth-copy">
+      <span class="hero-kicker">Terhubung · Tertib · Terpantau</span>
+      <h1>Catatan PKL dalam satu ruang kerja.</h1>
+      <p>Pelaporan harian siswa, dokumentasi kegiatan, verifikasi pembimbing, dan portofolio tersusun rapi.</p>
+      <div class="feature-pills">
+        <span>Foto</span>
+        <span>Dokumen</span>
+        <span>Video</span>
+        <span>PDF</span>
+      </div>
+    </div>
+    <img class="auth-illustration" src="/images/pkl-hero.svg" alt="" aria-hidden="true">
+  </section>
+  <main class="auth-panel">
+    <div class="auth-card">
+      <img class="mobile-logo" src="/images/school-mark.svg" alt="Lambang SMK Negeri 1 Muara Pawan">
+      <span class="eyebrow">Selamat datang</span>
+      <h2>Masuk ke <%= settings.applicationName %></h2>
+      <p class="muted">Gunakan akun yang diberikan oleh administrator PKL.</p>
+      <%- include("partials/flash") %>
+      <form action="/login" method="post" class="stack-form">
+        <input type="hidden" name="next" value="<%= next %>">
+        <label>
+          <span>Nama pengguna</span>
+          <input name="username" autocomplete="username" required autofocus placeholder="contoh: nanang.as">
+        </label>
+        <label>
+          <span>Kata sandi</span>
+          <span class="password-field">
+            <input type="password" name="password" autocomplete="current-password" required placeholder="Masukkan kata sandi">
+            <button type="button" data-password-toggle aria-label="Tampilkan kata sandi">Lihat</button>
+          </span>
+        </label>
+        <button class="button button-primary button-block" type="submit">Masuk ke aplikasi</button>
+      </form>
+      <div class="auth-help">Hubungi administrator PKL jika akun belum tersedia.</div>
+    </div>
+    <footer class="auth-footer">
+      <span><%= settings.schoolName %></span>
+      <strong>Development by Nanang A.S</strong>
+    </footer>
+  </main>
+</div>
+<script src="/js/app.js" defer></script>
+</body>
+</html>

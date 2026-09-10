@@ -1,0 +1,116 @@
+<%- include("partials/head", { title }) %>
+<%- include("partials/sidebar", { title }) %>
+
+<section class="welcome-card">
+  <div>
+    <span class="hero-kicker"><%= roleLabels[currentUser.role] %></span>
+    <h2>Selamat bekerja, <%= currentUser.name.split(' ')[0] %>.</h2>
+    <p>
+      <% if (currentUser.role === 'SISWA') { %>
+        Catat kegiatan PKL setiap hari dan pastikan bukti kegiatan terunggah dengan jelas.
+      <% } else { %>
+        Pantau laporan siswa dan selesaikan jurnal yang masih menunggu verifikasi.
+      <% } %>
+    </p>
+    <div class="hero-actions">
+      <% if (currentUser.role === 'SISWA') { %>
+        <a class="button button-light" href="/journals/new">+ Tambah jurnal hari ini</a>
+      <% } else { %>
+        <a class="button button-light" href="/journals?status=submitted">Periksa jurnal masuk</a>
+      <% } %>
+      <a class="button button-ghost-light" href="/journals">Lihat semua jurnal</a>
+    </div>
+  </div>
+  <img src="/images/pkl-hero.svg" alt="" aria-hidden="true">
+</section>
+
+<section class="stats-grid" aria-label="Statistik PKL">
+  <article class="stat-card">
+    <span class="stat-icon navy">▦</span>
+    <div><strong><%= stats.groups %></strong><span>Kelompok PKL</span></div>
+  </article>
+  <article class="stat-card">
+    <span class="stat-icon teal">♟</span>
+    <div><strong><%= stats.students %></strong><span>Siswa terpantau</span></div>
+  </article>
+  <article class="stat-card">
+    <span class="stat-icon amber">◷</span>
+    <div><strong><%= stats.pending %></strong><span>Menunggu verifikasi</span></div>
+  </article>
+  <article class="stat-card">
+    <span class="stat-icon green">✓</span>
+    <div><strong><%= stats.approved %></strong><span>Jurnal disetujui</span></div>
+  </article>
+</section>
+
+<div class="content-grid">
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">Aktivitas terkini</span>
+        <h2>Jurnal terbaru</h2>
+      </div>
+      <a class="text-link" href="/journals">Lihat semua →</a>
+    </div>
+    <% if (!recentJournals.length) { %>
+      <div class="empty-state">
+        <span class="empty-icon">▤</span>
+        <h3>Belum ada jurnal</h3>
+        <p>Jurnal harian yang dikirim siswa akan muncul di bagian ini.</p>
+        <% if (currentUser.role === 'SISWA') { %>
+          <a class="button button-primary" href="/journals/new">Buat jurnal pertama</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tanggal</th><th>Siswa</th><th>Kegiatan</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+          <% recentJournals.forEach((journal) => { %>
+            <tr>
+              <td><strong><%= formatDate(journal.date, { dateStyle: 'medium' }) %></strong></td>
+              <td><%= journal.student?.name || '—' %><small><%= journal.group?.name || '—' %></small></td>
+              <td class="truncate-cell"><%= journal.activity %></td>
+              <td><span class="status status-<%= journal.status %>"><%= statusLabels[journal.status] %></span></td>
+              <td><a class="table-action" href="/journals/<%= journal.id %>" aria-label="Buka jurnal">→</a></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </section>
+
+  <aside class="panel side-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">Periode aktif</span>
+        <h2><%= settings.academicYear %></h2>
+      </div>
+      <span class="semester-badge"><%= settings.semester %></span>
+    </div>
+    <% if (currentUser.role === 'SISWA' && activeGroup) { %>
+      <dl class="info-list">
+        <div><dt>Kelompok</dt><dd><%= activeGroup.name %></dd></div>
+        <div><dt>DUDI</dt><dd><%= partnerById(activeGroup.partnerId)?.name || '—' %></dd></div>
+        <div><dt>Guru pembimbing</dt><dd><%= userById(activeGroup.teacherId)?.name || '—' %></dd></div>
+        <div><dt>Pembimbing lapangan</dt><dd><%= userById(activeGroup.fieldSupervisorId)?.name || '—' %></dd></div>
+      </dl>
+      <a class="button button-secondary button-block" href="/portfolio/<%= currentUser.id %>.pdf?groupId=<%= activeGroup.id %>">Unduh portofolio PDF</a>
+    <% } else if (currentUser.role === 'ADMIN' && !groups.length) { %>
+      <div class="empty-compact">
+        <p>Belum ada kelompok aktif. Lengkapi akun, DUDI, lalu buat kelompok.</p>
+        <a class="button button-secondary button-block" href="/admin">Buka pengaturan</a>
+      </div>
+    <% } else { %>
+      <dl class="info-list">
+        <div><dt>Kelompok dalam akses</dt><dd><%= groups.length %> kelompok</dd></div>
+        <div><dt>Laporan hari ini</dt><dd><%= stats.today %> jurnal</dd></div>
+        <div><dt>Perlu diperiksa</dt><dd><%= stats.pending %> jurnal</dd></div>
+      </dl>
+      <a class="button button-secondary button-block" href="/exports/journals.csv">Ekspor rekap CSV</a>
+    <% } %>
+  </aside>
+</div>
+
+<%- include("partials/footer") %>

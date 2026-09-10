@@ -1,0 +1,14 @@
+<% if (message?.success) { %>
+  <div class="flash flash-success" role="status">
+    <span class="flash-icon">✓</span>
+    <span><%= message.success %></span>
+    <button type="button" class="icon-button" data-dismiss-flash aria-label="Tutup pesan">×</button>
+  </div>
+<% } %>
+<% if (message?.error) { %>
+  <div class="flash flash-error" role="alert">
+    <span class="flash-icon">!</span>
+    <span><%= message.error %></span>
+    <button type="button" class="icon-button" data-dismiss-flash aria-label="Tutup pesan">×</button>
+  </div>
+<% } %>

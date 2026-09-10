@@ -1,0 +1,69 @@
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="/images/school-mark.svg" alt="Lambang SMK Negeri 1 Muara Pawan" width="52" height="60">
+      <div>
+        <strong><%= settings.applicationName %></strong>
+        <span>SMKN 1 Muara Pawan</span>
+      </div>
+    </div>
+
+    <nav class="main-nav" aria-label="Navigasi utama">
+      <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'active' : '' %>">
+        <span class="nav-icon" aria-hidden="true">⌂</span>
+        <span>Ringkasan</span>
+      </a>
+      <a href="/journals" class="<%= currentPath.startsWith('/journals') ? 'active' : '' %>">
+        <span class="nav-icon" aria-hidden="true">▤</span>
+        <span>Jurnal Harian</span>
+      </a>
+      <% if (currentUser?.role === 'SISWA') { %>
+        <a href="/portfolio/<%= currentUser.id %>.pdf">
+          <span class="nav-icon" aria-hidden="true">⇩</span>
+          <span>Portofolio PDF</span>
+        </a>
+      <% } %>
+      <% if (currentUser?.role === 'ADMIN') { %>
+        <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>">
+          <span class="nav-icon" aria-hidden="true">⚙</span>
+          <span>Pengaturan PKL</span>
+        </a>
+      <% } %>
+      <a href="/account" class="<%= currentPath === '/account' ? 'active' : '' %>">
+        <span class="nav-icon" aria-hidden="true">○</span>
+        <span>Akun Saya</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="period-chip">
+        <span>Periode aktif</span>
+        <strong><%= settings.academicYear %></strong>
+        <small>Semester <%= settings.semester %></small>
+      </div>
+      <form action="/logout" method="post">
+        <button class="logout-button" type="submit">Keluar</button>
+      </form>
+    </div>
+  </aside>
+
+  <section class="app-content">
+    <header class="topbar">
+      <button type="button" class="menu-button" data-menu-toggle aria-controls="sidebar" aria-expanded="false">
+        <span></span><span></span><span></span>
+        <span class="sr-only">Buka navigasi</span>
+      </button>
+      <div class="topbar-title">
+        <span class="eyebrow">Praktik Kerja Lapangan</span>
+        <h1><%= title %></h1>
+      </div>
+      <div class="user-chip">
+        <span class="avatar"><%= currentUser?.name?.charAt(0)?.toUpperCase() || 'U' %></span>
+        <div>
+          <strong><%= currentUser?.name %></strong>
+          <small><%= roleLabels[currentUser?.role] %></small>
+        </div>
+      </div>
+    </header>
+    <main class="page-content">
+      <%- include("flash") %>

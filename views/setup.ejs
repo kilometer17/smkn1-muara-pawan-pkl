@@ -1,0 +1,58 @@
+<%- include("partials/head", { title }) %>
+<div class="auth-page setup-page">
+  <section class="auth-visual">
+    <div class="auth-brand">
+      <img src="/images/school-mark.svg" alt="Lambang sekolah">
+      <div>
+        <span>Persiapan awal</span>
+        <strong><%= settings.applicationName %></strong>
+      </div>
+    </div>
+    <div class="auth-copy">
+      <span class="hero-kicker">Langkah pertama</span>
+      <h1>Buat administrator sekolah.</h1>
+      <p>Akun ini digunakan untuk mengatur periode, DUDI, pembimbing, dan kelompok siswa PKL.</p>
+    </div>
+    <img class="auth-illustration" src="/images/pkl-hero.svg" alt="" aria-hidden="true">
+  </section>
+  <main class="auth-panel">
+    <div class="auth-card">
+      <img class="mobile-logo" src="/images/school-mark.svg" alt="Lambang SMK Negeri 1 Muara Pawan">
+      <span class="eyebrow">Konfigurasi pertama</span>
+      <h2>Administrator PKL</h2>
+      <p class="muted">Tidak ada akun bawaan. Simpan kata sandi ini dengan aman.</p>
+      <%- include("partials/flash") %>
+      <form action="/setup" method="post" class="stack-form">
+        <label>
+          <span>Nama lengkap</span>
+          <input name="name" required maxlength="120" autocomplete="name" placeholder="Nama administrator">
+        </label>
+        <label>
+          <span>Nama pengguna</span>
+          <input name="username" required minlength="3" maxlength="60" pattern="[a-z0-9._-]+" autocomplete="username" placeholder="admin.pkl">
+          <small>Huruf kecil, angka, titik, garis bawah, atau tanda hubung.</small>
+        </label>
+        <label>
+          <span>Kata sandi</span>
+          <span class="password-field">
+            <input type="password" name="password" required minlength="10" autocomplete="new-password">
+            <button type="button" data-password-toggle aria-label="Tampilkan kata sandi">Lihat</button>
+          </span>
+          <small>Minimal 10 karakter, memuat huruf besar, huruf kecil, dan angka.</small>
+        </label>
+        <label>
+          <span>Ulangi kata sandi</span>
+          <input type="password" name="confirmPassword" required minlength="10" autocomplete="new-password">
+        </label>
+        <button class="button button-primary button-block" type="submit">Buat administrator</button>
+      </form>
+    </div>
+    <footer class="auth-footer">
+      <span><%= settings.schoolName %></span>
+      <strong>Development by Nanang A.S</strong>
+    </footer>
+  </main>
+</div>
+<script src="/js/app.js" defer></script>
+</body>
+</html>

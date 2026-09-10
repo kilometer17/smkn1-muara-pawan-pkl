@@ -1,0 +1,22 @@
+<%- include("partials/head", { title }) %>
+<% if (currentUser) { %>
+  <%- include("partials/sidebar", { title }) %>
+  <section class="panel error-card">
+    <span class="error-code"><%= status %></span>
+    <h2><%= title %></h2>
+    <p><%= detail %></p>
+    <a class="button button-primary" href="/dashboard">Kembali ke ringkasan</a>
+  </section>
+  <%- include("partials/footer") %>
+<% } else { %>
+  <main class="standalone-error">
+    <img src="/images/school-mark.svg" alt="Lambang sekolah">
+    <span class="error-code"><%= status %></span>
+    <h1><%= title %></h1>
+    <p><%= detail %></p>
+    <a class="button button-primary" href="/login">Kembali ke halaman masuk</a>
+    <footer><strong>Development by Nanang A.S</strong></footer>
+  </main>
+  <script src="/js/app.js" defer></script>
+  </body></html>
+<% } %>

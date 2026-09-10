@@ -1,0 +1,41 @@
+<%- include("partials/head", { title }) %>
+<%- include("partials/sidebar", { title }) %>
+
+<div class="narrow-layout">
+  <section class="panel profile-card">
+    <div class="profile-head">
+      <span class="profile-avatar"><%= currentUser.name.charAt(0).toUpperCase() %></span>
+      <div>
+        <h2><%= currentUser.name %></h2>
+        <p><%= roleLabels[currentUser.role] %> · @<%= currentUser.username %></p>
+      </div>
+    </div>
+    <dl class="info-list">
+      <% if (currentUser.nis) { %><div><dt>NIS</dt><dd><%= currentUser.nis %></dd></div><% } %>
+      <% if (currentUser.className) { %><div><dt>Kelas</dt><dd><%= currentUser.className %></dd></div><% } %>
+      <% if (currentUser.phone) { %><div><dt>Nomor telepon</dt><dd><%= currentUser.phone %></dd></div><% } %>
+      <div><dt>Status akun</dt><dd><span class="status status-approved">Aktif</span></dd></div>
+    </dl>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div><span class="eyebrow">Keamanan akun</span><h2>Ubah kata sandi</h2></div>
+    </div>
+    <form action="/account/password" method="post" class="stack-form">
+      <label><span>Kata sandi lama</span><input type="password" name="currentPassword" required autocomplete="current-password"></label>
+      <label>
+        <span>Kata sandi baru</span>
+        <span class="password-field">
+          <input type="password" name="newPassword" required minlength="10" autocomplete="new-password">
+          <button type="button" data-password-toggle>Lihat</button>
+        </span>
+        <small>Minimal 10 karakter, memuat huruf besar, huruf kecil, dan angka.</small>
+      </label>
+      <label><span>Ulangi kata sandi baru</span><input type="password" name="confirmPassword" required minlength="10" autocomplete="new-password"></label>
+      <button class="button button-primary" type="submit">Simpan kata sandi baru</button>
+    </form>
+  </section>
+</div>
+
+<%- include("partials/footer") %>
