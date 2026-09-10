@@ -1,0 +1,28 @@
+{
+  "name": "smkn1-muara-pawan-pkl",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplikasi monitoring PKL SMK Negeri 1 Muara Pawan berbasis Node.js 20+",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --test-reporter=spec",
+    "check": "node --check src/app.js && node --check src/store.js && node --test"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.2",
+    "pdfkit": "^0.17.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4"
+  }
+}
