@@ -1,0 +1,17 @@
+{
+  "name": "SIMON PKL SMK Negeri 1 Muara Pawan",
+  "short_name": "SIMON PKL",
+  "description": "Sistem monitoring dan jurnal Praktik Kerja Lapangan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#102a56",
+  "icons": [
+    {
+      "src": "/images/school-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" role="img" aria-labelledby="title desc">
+<title id="title">Lambang SMK Negeri 1 Muara Pawan</title>
+<desc id="desc">Perisai biru dan emas dengan buku, pena, daun, sayap, mahkota, dan lima bintang.</desc>
+<defs>
+  <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#173b72"/><stop offset="1" stop-color="#081a36"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe56f"/><stop offset="1" stop-color="#f2bd23"/></linearGradient>
+</defs>
+<path d="M15 25Q120-5 225 25v146q0 68-105 101Q15 239 15 171Z" fill="url(#navy)" stroke="url(#gold)" stroke-width="10"/>
+<path d="M19 30Q120 2 221 30v43H19Z" fill="url(#gold)"/>
+<text x="120" y="49" text-anchor="middle" fill="#102a56" font-family="Arial,sans-serif" font-size="18" font-weight="900">SMKN 1</text>
+<text x="120" y="67" text-anchor="middle" fill="#102a56" font-family="Arial,sans-serif" font-size="12" font-weight="800">MUARA PAWAN</text>
+<path d="M90 105l10-18 10 14 10-20 10 20 10-14 10 18Z" fill="#f4c430"/>
+<path d="M82 126q20-10 38 2q18-12 38-2v31q-20-8-38 3q-18-11-38-3Z" fill="#fff" stroke="#f4c430" stroke-width="3"/>
+<path d="M120 128v78" stroke="#f4c430" stroke-width="9" stroke-linecap="round"/>
+<path d="M120 136v61" stroke="#258b62" stroke-width="6"/>
+<path d="M109 202l11 18 11-18Z" fill="#fff"/>
+<path d="M78 151q-25 5-42 30q25 2 52-17m-4 10q-22 12-29 34q24-5 43-23" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+<path d="M162 151q25 5 42 30q-25 2-52-17m4 10q22 12 29 34q-24-5-43-23" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+<path d="M65 215q-24-21-30-59" fill="none" stroke="#31a86c" stroke-width="6" stroke-linecap="round"/>
+<g fill="#47bb7d"><ellipse cx="41" cy="169" rx="7" ry="13" transform="rotate(-35 41 169)"/><ellipse cx="47" cy="187" rx="7" ry="13" transform="rotate(-50 47 187)"/><ellipse cx="57" cy="203" rx="7" ry="13" transform="rotate(-60 57 203)"/></g>
+<path d="M175 215q24-21 30-59" fill="none" stroke="#f4c430" stroke-width="6" stroke-linecap="round"/>
+<g fill="#f4c430"><ellipse cx="199" cy="169" rx="7" ry="13" transform="rotate(35 199 169)"/><ellipse cx="193" cy="187" rx="7" ry="13" transform="rotate(50 193 187)"/><ellipse cx="183" cy="203" rx="7" ry="13" transform="rotate(60 183 203)"/></g>
+<g fill="#f4c430"><path d="m70 228 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z"/><path d="m95 237 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z"/><path d="m120 242 4 9 10 1-8 6 3 10-9-5-9 5 3-10-8-6 10-1Z"/><path d="m145 237 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z"/><path d="m170 228 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z"/></g>
+</svg>
